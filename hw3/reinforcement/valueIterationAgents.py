@@ -171,24 +171,29 @@ class PrioritizedSweepingValueIterationAgent(ValueIterationAgent):
     def runValueIteration(self):
         "*** YOUR CODE HERE ***"
         # compute predecessors of all states
-        pre = set()
+        pre = util.Counter(set()) # ????????
         for s in self.mdp.getStates():
-            pre.add(s)
+            cand = set()
             for p in self.mdp.getStates():
                 for a in self.mdp.getPossibleActions(p):
                     for pair in self.mdp.getTransitionStatesAndProbs(p, a):
-                        if pair[1] == 0:
-                            continue    # predecessor's property: prob>0
                         if pair[0] != s:
                             continue    # predecessor's definition: T(p,a)=s
-                        pre
+                        if pair[1] == 0:
+                            continue    # predecessor's property: prob>0
+                        cand.add(p)
+            pre[s] = cand
+        for s in self.mdp.getStates():
+            print('predecessor for state ',s)
+            for p in pre[s]:
+                print(p)
         Q = util.PriorityQueue()
         for s in self.mdp.getStates():
             if not self.mdp.isTerminal(s):
                 continue
             s_current = self.values[s]
             s_highest = -10000000 # -inf
-            for a in self.mdp.getPossibleActions(s):
+            for a in self.mdp.getPossibleActions(s):    # across all possible actions?
                 tmp = self.getQValue(s, a)
                 if tmp > highestQValue:
                     highestQValue = tmp
@@ -200,19 +205,14 @@ class PrioritizedSweepingValueIterationAgent(ValueIterationAgent):
                 s = Q.pop()
                 if not self.mdp.isTerminal(s):
                     self.values[s] = diff
-                for p in self.mdp.getStates():
+                for p in pre[s]:
+                    p_current = self.values[p]
+                    p_highest = -10000000
                     for a in self.mdp.getPossibleActions(p):
-                        for pair in self.mdp.getTransitionStatesAndProbs(p, a):
-                            if pair[1] == 0:
-                                continue    # predecessor's property: prob>0
-                            if pair[0] != s:
-                                continue    # predecessor's definition: T(p,a)=s
-                            p_current = self.values[p]
-                            p_highest = -10000000
-                            for a in self.mdp.getPossibleActions(p):
-                                temp = self.getQValue(p, a)
-                                if temp > p_highest:
-                                    p_highest = temp
-                            diff = abs(p_current - p_highest)
-                            if diff > self.theta:
-                                Q.update(p, -diff)
+                        temp = self.getQValue(p, a)
+                        if temp > p_highest:
+                            p_highest = temp
+                    diff = abs(p_current - p_highest)   # don't update self.values[p] here
+                    if diff > self.theta:
+                        Q.update(p, -diff)
+                    self.values[p] = diff
