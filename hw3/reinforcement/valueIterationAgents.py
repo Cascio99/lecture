@@ -204,7 +204,7 @@ class PrioritizedSweepingValueIterationAgent(ValueIterationAgent):
                     return
                 s = Q.pop()
                 if not self.mdp.isTerminal(s):
-                    self.values[s] = diff
+                    self.values[s] += diff
                 for p in pre[s]:
                     p_current = self.values[p]
                     p_highest = -10000000
@@ -215,4 +215,4 @@ class PrioritizedSweepingValueIterationAgent(ValueIterationAgent):
                     diff = abs(p_current - p_highest)   # don't update self.values[p] here
                     if diff > self.theta:
                         Q.update(p, -diff)
-                    self.values[p] = diff
+                    self.values[p] += diff
