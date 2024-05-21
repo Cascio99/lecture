@@ -51,6 +51,7 @@ class QLearningAgent(ReinforcementAgent):
           or the Q node value otherwise
         """
         "*** YOUR CODE HERE ***"
+        return 1
         util.raiseNotDefined()
 
 

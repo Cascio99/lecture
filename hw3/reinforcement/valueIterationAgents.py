@@ -183,10 +183,11 @@ class PrioritizedSweepingValueIterationAgent(ValueIterationAgent):
                             continue    # predecessor's property: prob>0
                         cand.add(p)
             pre[s] = cand
-        for s in self.mdp.getStates():
-            print('predecessor for state ',s)
-            for p in pre[s]:
-                print(p)
+        # debug
+        # for s in self.mdp.getStates():
+        #     print('predecessor for state ',s)
+        #     for p in pre[s]:
+        #         print(p)
         Q = util.PriorityQueue()
         for s in self.mdp.getStates():
             if not self.mdp.isTerminal(s):
@@ -195,16 +196,22 @@ class PrioritizedSweepingValueIterationAgent(ValueIterationAgent):
             s_highest = -10000000 # -inf
             for a in self.mdp.getPossibleActions(s):    # across all possible actions?
                 tmp = self.getQValue(s, a)
-                if tmp > highestQValue:
-                    highestQValue = tmp
+                if tmp > s_highest:
+                    s_highest = tmp
             diff = abs(s_current - s_highest)   # don't update self.values[s] here
             Q.push(s, -diff)
+            tmp_values = util.Counter()
             for i in range(self.iterations):
                 if Q.isEmpty():
-                    return
+                    # return
+                    break
+                # if i>0 and self.mdp.getPossibleActions(s)==('exit',):
+                #     break
                 s = Q.pop()
                 if not self.mdp.isTerminal(s):
-                    self.values[s] += diff
+                    print('state: ',s,'diff: ',diff)
+                    tmp_values[s] += diff
+                tmp_p = util.Counter()
                 for p in pre[s]:
                     p_current = self.values[p]
                     p_highest = -10000000
@@ -215,4 +222,7 @@ class PrioritizedSweepingValueIterationAgent(ValueIterationAgent):
                     diff = abs(p_current - p_highest)   # don't update self.values[p] here
                     if diff > self.theta:
                         Q.update(p, -diff)
-                    self.values[p] += diff
+                    if not self.mdp.isTerminal(p):
+                        tmp_p[p] += diff
+                tmp_values[p] = tmp_p[p]
+                self.values[s] = tmp_values[s]
