@@ -66,7 +66,7 @@ class QLearningAgent(ReinforcementAgent):
         """
         "*** YOUR CODE HERE ***"
         # V(s) = max_a{Q(s, a)}
-        action = self.computeActionFromQValues(state) # choose random_action
+        action = self.computeActionFromQValues(state) # choose random_action?
         if action == None:  # terminal_state
           return 0.0
         return self.getQValue(state, action)
@@ -79,7 +79,7 @@ class QLearningAgent(ReinforcementAgent):
           you should return None.
         """
         "*** YOUR CODE HERE ***"
-        # choose random_action
+        # choose random_action?
         if self.getLegalActions(state) == (): # terminal_state
           return None
         pi = None
@@ -107,6 +107,22 @@ class QLearningAgent(ReinforcementAgent):
         legalActions = self.getLegalActions(state)
         action = None
         "*** YOUR CODE HERE ***"
+        if legalActions == ():  # terminal_state
+          return None
+        # print(util.flipCoin(self.epsilon))
+        # print(random.choice(legalActions))
+        p = util.flipCoin(self.epsilon)
+        # case 1: choose random_action
+        if p == True:
+          return random.choice(legalActions)
+        # case 2: choose optimal_action for current episode
+        max = -10000000
+        for a in legalActions:
+          tmp = self.getQValue(state, a)
+          if tmp > max:
+            action = a
+            max = tmp
+        return action
         util.raiseNotDefined()
 
         return action
