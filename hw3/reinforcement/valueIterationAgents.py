@@ -170,11 +170,15 @@ class PrioritizedSweepingValueIterationAgent(ValueIterationAgent):
 
     def runValueIteration(self):
         "*** YOUR CODE HERE ***"
-        # compute predecessors of all states
-        pre = util.Counter(set()) # ????????
+        
+        # May 23 1pm~
+        # Compute predecessors of all states
+        pre = util.Counter(set())   
         for s in self.mdp.getStates():
             cand = set()
             for p in self.mdp.getStates():
+                if p == s:
+                    continue    # skip s
                 for a in self.mdp.getPossibleActions(p):
                     for pair in self.mdp.getTransitionStatesAndProbs(p, a):
                         if pair[0] != s:
@@ -183,46 +187,54 @@ class PrioritizedSweepingValueIterationAgent(ValueIterationAgent):
                             continue    # predecessor's property: prob>0
                         cand.add(p)
             pre[s] = cand
+        Q = util.PriorityQueue()    # max-heap
+        tmp_values = self.values.copy() # temp_var for faster algorithm?
+        for s in self.mdp.getStates():
+            if self.mdp.isTerminal(s):
+                continue
+            current = self.values[s]
+            highest = -10000000
+            for a in self.mdp.getPossibleActions(s):
+                tmp = self.getQValue(s, a)
+                if tmp > highest:
+                    highest = tmp
+            diff = abs(current - highest)   # don't update self.values[s] here
+            tmp_values[s] = highest # for faster algorithm?
+            Q.push(s, -diff)
         # debug
         # for s in self.mdp.getStates():
-        #     print('predecessor for state ',s)
+        #     print('\nPredecessors of state ',s,': ')
         #     for p in pre[s]:
         #         print(p)
-        Q = util.PriorityQueue()
-        for s in self.mdp.getStates():
+        # while(1):
+        #     if Q.isEmpty():
+        #         break
+        #     s = Q.pop()
+        #     print(s)
+        for i in range(self.iterations):
+            if Q.isEmpty():
+                break
+            s = Q.pop()
+            # update the value of s in self.values
             if not self.mdp.isTerminal(s):
-                continue
-            s_current = self.values[s]
-            s_highest = -10000000 # -inf
-            for a in self.mdp.getPossibleActions(s):    # across all possible actions?
-                tmp = self.getQValue(s, a)
-                if tmp > s_highest:
-                    s_highest = tmp
-            diff = abs(s_current - s_highest)   # don't update self.values[s] here
-            Q.push(s, -diff)
-            tmp_values = util.Counter()
-            for i in range(self.iterations):
-                if Q.isEmpty():
-                    # return
-                    break
-                # if i>0 and self.mdp.getPossibleActions(s)==('exit',):
-                #     break
-                s = Q.pop()
-                if not self.mdp.isTerminal(s):
-                    print('state: ',s,'diff: ',diff)
-                    tmp_values[s] += diff
-                tmp_p = util.Counter()
-                for p in pre[s]:
-                    p_current = self.values[p]
-                    p_highest = -10000000
-                    for a in self.mdp.getPossibleActions(p):
-                        temp = self.getQValue(p, a)
-                        if temp > p_highest:
-                            p_highest = temp
-                    diff = abs(p_current - p_highest)   # don't update self.values[p] here
-                    if diff > self.theta:
-                        Q.update(p, -diff)
-                    if not self.mdp.isTerminal(p):
-                        tmp_p[p] += diff
-                tmp_values[p] = tmp_p[p]
-                self.values[s] = tmp_values[s]
+                # print('help')
+                if self.discount==0.75: # debugging 2-tinygird-noisy.test
+                    print(i,'th iteration: Update value of state ',s,'. ',self.values[s],' to ',tmp_values[s])
+                self.values[s] = tmp_values[s]  # for faster algorithm?
+            tmp_p = tmp_values.copy()   # temp_var for each iterations' update?
+            for p in pre[s]:
+                current = self.values[p]
+                highest = -10000000
+                for a in self.mdp.getPossibleActions(p):
+                    tmp = self.getQValue(p, a)
+                    if tmp > highest:
+                        highest = tmp
+                diff = abs(current - highest)   # don't update self.values[p] here
+                tmp_values[p] = highest # for faster algorithm?
+                # tmp_p[p] = highest
+                if diff > self.theta:
+                    Q.update(p, -diff)
+            # update the value of p in self.values before next iteration
+            # for p in pre[s]:
+            #     # self.values[p] = tmp_values[p]  # for faster algorithm?
+            #     tmp_values[p] = tmp_p[p]
