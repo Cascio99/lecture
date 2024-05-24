@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -206,13 +206,11 @@ class ApproximateQAgent(PacmanQAgent):
           where * is the dotProduct operator
         """
         "*** YOUR CODE HERE ***"
-        # print(self.getWeights()[state, action])
-        # print(self.featExtractor.getFeatures(state, action))
-        w = self.getWeights()[state, action]
-        f = self.featExtractor.getFeatures(state, action)[state, action]
-        # print(w)
-        # print(f)
-        return w*f
+        # fitting self.weights to self.featExtractor.getFeatures(state, action): util.Counter(util.Counter()) type
+        "must link self.weights[i] to self.featExtractor.getFeatures(state, action)[i]"
+        w = self.getWeights()
+        f = self.featExtractor.getFeatures(state, action)
+        return w.__mul__(f)
         util.raiseNotDefined()
 
     def update(self, state, action, nextState, reward):
@@ -220,15 +218,29 @@ class ApproximateQAgent(PacmanQAgent):
            Should update your weights based on transition
         """
         "*** YOUR CODE HERE ***"
-        # w_i <- w_i + alpha*difference*f_i(s, a), difference = sampleQ-Q, sampleQ = R(s, a, s') + gamma*max_a'{Q(s', a')}
-        nextStateVal = self.getValue(nextState)
+        # i: 1 ~ n ==> n=1 for IdentityExtractor, n=4 for CoordinateExtractor
+        # w_i <- w_i + alpha*difference*f_i(s, a), difference = sampleQ - Q, sampleQ = R(s, a, s') + gamma*max_a'{Q(s', a')}
+        w = self.getWeights()
+        f = self.featExtractor.getFeatures(state, action)
+        # compute V(s') = max_a'{Q(s', a')}
+        nextStateVal = -10000000
+        pi = None
+        for a in self.getLegalActions(nextState):
+          tmp = self.getQValue(nextState, a)
+          if tmp > nextStateVal:
+            nextStateVal = tmp
+            pi = a
+        if pi == None:  # terminal_state
+          nextStateVal = 0
+        
         sampleQ = reward + self.discount*nextStateVal
         diff = sampleQ - self.getQValue(state, action)
-        f_i = self.featExtractor.getFeatures(state, action)[state, action]
-        self.weights[state, action] += self.alpha*diff*f_i
-        # update QValues
-        self.qvalues[state, action] += self.alpha*(sampleQ - self.qvalues[state, action])
-        return self.getWeights()[state, action]
+        delta = f.copy()
+        if self.alpha*diff != 0:
+          delta.divideAll(1/(self.alpha*diff))
+          self.weights.__radd__(delta)
+        # don't update QValues
+        return self.getWeights()
         util.raiseNotDefined()
 
     def final(self, state):
@@ -240,4 +252,5 @@ class ApproximateQAgent(PacmanQAgent):
         if self.episodesSoFar == self.numTraining:
             # you might want to print your weights here for debugging
             "*** YOUR CODE HERE ***"
+            # print('help')
             pass
