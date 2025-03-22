@@ -1,2 +1,2 @@
-# 2024 Spring backup
+# 2024 Spring Coursework
 - AI, CV, OS homeworks
