@@ -1,2 +1,2 @@
-# 24_AI
-2024 Spring AI
+# 2024 Spring backup
+- AI, CV, OS homeworks
