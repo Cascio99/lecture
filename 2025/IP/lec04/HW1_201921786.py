@@ -1,6 +1,6 @@
 import cv2 as cv
 
-img = cv.imread('/home/ysw/ws/25S_lec/IP/lec04/lec4_vehicles.jpg', cv.IMREAD_COLOR)
+img = cv.imread('/home/ysw/ws/lecture/2025/IP/lec04/lec4_vehicles.jpg', cv.IMREAD_COLOR)
 
 def draw(event, x, y, flags, param):
     global ix, iy
@@ -22,6 +22,6 @@ cv.setMouseCallback('image', draw)
 while True:
     key = cv.waitKey(1)
     if key == ord('q'):
-        cv.imwrite('/home/ysw/ws/25S_lec/IP/lec04/HW1_201921786.jpg', img)
+        cv.imwrite('/home/ysw/ws/lecture/2025/IP/lec04/HW1_201921786.jpg', img)
         cv.destroyAllWindows()
         break

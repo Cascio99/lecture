@@ -5,15 +5,15 @@ from PIL import ImageFont, Image, ImageDraw
 # Do debugging step by step!!!
 # ft. shallow copy vs deep copy
 
-fg = cv.VideoCapture("/home/ysw/ws/25S_lec/IP/lec06/lec6_Resources/lec6_woman.mp4")
-bg = cv.VideoCapture("/home/ysw/ws/25S_lec/IP/lec06/lec6_Resources/lec6_raining.mp4")
+fg = cv.VideoCapture("/home/ysw/ws/lecture/2025/IP/lec06/lec6_Resources/lec6_woman.mp4")
+bg = cv.VideoCapture("/home/ysw/ws/lecture/2025/IP/lec06/lec6_Resources/lec6_raining.mp4")
 
 w = round(fg.get(cv.CAP_PROP_FRAME_WIDTH))
 h = round(fg.get(cv.CAP_PROP_FRAME_HEIGHT))
 fps = fg.get(cv.CAP_PROP_FPS)
 fourcc = cv.VideoWriter_fourcc(*'DIVX')
 delay = round(1000/fps)
-out = cv.VideoWriter('/home/ysw/ws/25S_lec/IP/lec06/hw3_201921786.avi', fourcc, fps, (w, h))
+out = cv.VideoWriter('/home/ysw/ws/lecture/2025/IP/lec06/hw3_201921786.avi', fourcc, fps, (w, h))
 
 def show_hsv(event, x, y, flags, param):    # debug
     if event == cv.EVENT_LBUTTONDOWN:
@@ -22,7 +22,7 @@ def show_hsv(event, x, y, flags, param):    # debug
         print(f'HSV at ({x}, {y}): {hsv_value}')
 
 def put_text(img, text, position, font_path, font_size, color):
-    img_pil = Image.fromarray(cv.cvtColor(img, cv.COLOR_BGR2RGB))   # Convert the frame to RGB (PIL uses RGB)
+    img_pil = Image.fromarray(cv.cvtColor(img, cv.COLOR_BGR2RGB))   # Convert the frame from BGR to RGB (PIL uses RGB)
 
     font = ImageFont.truetype(font_path, font_size) # Load the font
 
@@ -73,7 +73,7 @@ while(fg.isOpened()):
         mask = ~cv.inRange(hsv, GREEN_MIN, GREEN_MAX)   # fg(woman, text): white, bg(raining): black
         cv.imshow('mask', mask)
 
-        cv.copyTo(frame1, mask, frame2)
+        cv.copyTo(frame1, mask, frame2) # deep copy
         cv.imshow('frame2', frame2)
         out.write(frame2)
     else:

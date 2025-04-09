@@ -1,14 +1,14 @@
 import cv2 as cv
 
-cap1 = cv.VideoCapture("/home/ysw/ws/25S_lec/IP/lec05/lec5_Resources/lec5_video1.mp4")
-cap2 = cv.VideoCapture("/home/ysw/ws/25S_lec/IP/lec05/lec5_Resources/lec5_video2.mp4")
+cap1 = cv.VideoCapture("/home/ysw/ws/lecture/2025/IP/lec05/lec5_Resources/lec5_video1.mp4")
+cap2 = cv.VideoCapture("/home/ysw/ws/lecture/2025/IP/lec05/lec5_Resources/lec5_video2.mp4")
 
 w = round(cap1.get(cv.CAP_PROP_FRAME_WIDTH))
 h = round(cap1.get(cv.CAP_PROP_FRAME_HEIGHT))
 fps = cap1.get(cv.CAP_PROP_FPS)
 fourcc = cv.VideoWriter_fourcc(*'DIVX')
 delay = round(1000/fps)
-out = cv.VideoWriter('/home/ysw/ws/25S_lec/IP/lec05/HW2_201921786.avi', fourcc, fps, (w, h))
+out = cv.VideoWriter('/home/ysw/ws/lecture/2025/IP/lec05/HW2_201921786.avi', fourcc, fps, (w, h))
 # print("FPS: ", fps) # 24
 # print("w, h: ", w, h)
 
