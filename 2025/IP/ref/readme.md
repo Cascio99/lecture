@@ -1,0 +1,1 @@
+- [ref link](https://github.com/a-anjos/python-opencv/blob/master/cv2cheatsheet.pdf)
