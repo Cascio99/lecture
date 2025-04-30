@@ -27,7 +27,7 @@ while(cap1.isOpened()):
         out.write(frame1)
         # cv.imshow('frame', frame1)
     elif cnt >= fps and cnt < 3*fps:
-        col = round((cnt - fps) * w / (2*fps))
+        col = round((cnt-fps) * w/(2*fps))  # 전체 w를 (2*fps)로 나누고, 프레임 진행(cnt-fps)함에 따라 frame2의 영역을 늘려감
         frame1[:,:col,:] = frame2[:,:col,:]
         out.write(frame1)
         # cv.imshow('frame', frame1)

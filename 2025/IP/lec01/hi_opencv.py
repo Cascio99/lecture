@@ -14,13 +14,15 @@ def onChange(val):
     cv.imshow(title, img)
 
 
-img = np.full((300, 500), 255, np.uint8)
+img = np.full((300, 500), 255, np.uint8) # default: np.uint8
+# img = np.zeros((300, 500), np.uint8)
+# img[:] = 100
 title = 'window'
 cv.imshow(title, img)
 
 cv.setMouseCallback(title, onMouse)
 
-cv.createTrackbar('Brightness', title, 0, 255, onChange)
+cv.createTrackbar('Brightness', title, 100, 255, onChange)
 
 cv.waitKey()
 cv.destroyAllWindows()

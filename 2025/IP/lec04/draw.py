@@ -9,11 +9,11 @@ import cv2 as cv
 
 # cv.putText(img, 'OpenCV', (100,400), cv.FONT_HERSHEY_SIMPLEX, 2, (0,255,255), 2)
 
-img = cv.imread('/home/ysw/ws/25S_lec/IP/lec04/lec4_vehicles.jpg', cv.IMREAD_COLOR)
+img = cv.imread('/home/ysw/ws/lecture/2025/IP/lec04/lec4_vehicles.jpg', cv.IMREAD_COLOR) # image -> numpy.ndarray
         
 img = cv.rectangle(img, (100,100), (200,300), (0,255,0), 3)
 
-cv.imwrite('/home/ysw/ws/25S_lec/IP/lec04/HW1_201921786.jpg', img)
+cv.imwrite('/home/ysw/ws/lecture/2025/IP/lec04/HW1_201921786.jpg', img) # numpy.ndarray -> image
 
 cv.imshow('image', img)
 cv.waitKey(0)

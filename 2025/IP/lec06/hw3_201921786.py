@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 from PIL import ImageFont, Image, ImageDraw
 
-# Do debugging step by step!!!
+# Debug step by step!!!
 # ft. shallow copy vs deep copy
 
 fg = cv.VideoCapture("/home/ysw/ws/lecture/2025/IP/lec06/lec6_Resources/lec6_woman.mp4")
@@ -57,7 +57,7 @@ while(fg.isOpened()):
     elif key_input == ord('q'):
         break
 
-    if flag:
+    if flag:    # chroma key mode
         cnt += 1
         
         ret2, frame2 = bg.read()
@@ -76,7 +76,7 @@ while(fg.isOpened()):
         cv.copyTo(frame1, mask, frame2) # deep copy
         cv.imshow('frame2', frame2)
         out.write(frame2)
-    else:
+    else:   # normal mode
         cv.imshow('frame1', frame1)
         cv.setMouseCallback('frame1', show_hsv, frame1) # debug
         out.write(frame1)
