@@ -12,7 +12,7 @@ kp1, desc1 = detector.detectAndCompute(src1, None)
 kp2, desc2 = detector.detectAndCompute(src2, None)
 
 # Matching descriptors using BFMatcher
-matcher = cv2.BFMatcher()
+matcher = cv2.BFMatcher_create()
 matches = matcher.match(desc1, desc2)
 matches = sorted(matches, key=lambda x: x.distance)
 good_matches = matches[:50]
@@ -33,11 +33,9 @@ dst = cv2.drawMatches(src1, kp1, src2, kp2, good_matches, None)
 corner1 = np.array([[0,0], [0,h-1], [w-1,h-1], [w-1,0]]).reshape(-1, 1, 2).astype(np.float32)
 corner2 = cv2.perspectiveTransform(corner1, H)
 # corner2 += (w, 0)  # Adjusting the corner points to match the scene image
-corner2 += np.float([w, 0])
+corner2 += np.float32([w, 0])  # Adjusting the corner points to match the scene image
 cv2.polylines(dst, [np.int32(corner2)], True, (0, 255, 0), 2)
 # need to tranform 
 
-# dst = cv2.drawMatches(src1, kp1, src2, kp2, matches, None)
-dst = cv2.drawMatches(src1, kp1, src2, kp2, good_matches, None)
 cv2.imshow('Matches', dst)
 cv2.waitKey(0)
